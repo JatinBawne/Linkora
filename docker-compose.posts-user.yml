@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  posts-db:
+    image: postgres
+    container_name: posts-db
+    environment:
+      - POSTGRES_DB=postsdb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    networks:
+      - linkedin-network
+    volumes:
+      - posts-db-data:/var/lib/postgresql/data
+
+  users-db:
+    image: postgres
+    container_name: users-db
+    environment:
+      - POSTGRES_DB=usersdb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    networks:
+      - linkedin-network
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+
+  posts-service:
+    image: jatinbawne/linkedin-app/posts-service
+    container_name: posts-service
+    networks:
+      - linkedin-network
+    depends_on:
+      - posts-db
+
+  user-service:
+    image: jatinbawne/linkedin-app/user-service
+    container_name: user-service
+    networks:
+      - linkedin-network
+    depends_on:
+      - users-db
+
+networks:
+  linkedin-network:
+
+volumes:
+  posts-db-data:
+  user-db-data:
